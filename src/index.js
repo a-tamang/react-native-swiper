@@ -81,7 +81,7 @@ let styles = StyleSheet.create({
     backgroundColor: 'transparent',
     flexDirection: 'row',
     position: 'absolute',
-    top: 0,
+    top: height / 4,
     left: 0,
     flex: 1,
     paddingHorizontal: 10,
@@ -124,6 +124,7 @@ module.exports = React.createClass({
     autoplayDirection                : React.PropTypes.bool,
     index                            : React.PropTypes.number,
     renderPagination                 : React.PropTypes.func,
+    heightArray                      : React.PropTypes.array,
   },
 
   mixins: [TimerMixin],
@@ -150,6 +151,7 @@ module.exports = React.createClass({
       autoplayTimeout                  : 2.5,
       autoplayDirection                : true,
       index                            : 0,
+      heightArray                      : [],
     }
   },
 
@@ -198,7 +200,7 @@ module.exports = React.createClass({
     // Default: horizontal
     initState.dir = props.horizontal === false ? 'y' : 'x'
     initState.width = props.width || width
-    initState.height = props.height || height
+    initState.height = height
     initState.offset = {}
 
     if (initState.total > 1) {
@@ -394,7 +396,7 @@ module.exports = React.createClass({
 
   scrollViewPropOverrides() {
     var props = this.props
-    var overrides = {}
+    var overrides = { height: props.heightArray[this.state.index] }
 
     /*
     const scrollResponders = [
@@ -469,7 +471,7 @@ module.exports = React.createClass({
 
   renderTitle() {
     let child = this.props.children[this.state.index]
-    let title = child && child.props && child.props.title
+    let title = child && child.props.title
     return title
       ? (
         <View style={styles.title}>
@@ -513,7 +515,7 @@ module.exports = React.createClass({
 
   renderButtons() {
     return (
-      <View pointerEvents='box-none' style={[styles.buttonWrapper, {width: this.state.width, height: this.state.height}, this.props.buttonWrapperStyle]}>
+      <View pointerEvents='box-none' style={[styles.buttonWrapper, {width: this.state.width}, this.props.buttonWrapperStyle]}>
         {this.renderPrevButton()}
         {this.renderNextButton()}
       </View>
@@ -560,7 +562,7 @@ module.exports = React.createClass({
     let key = 0
 
     let pages = []
-    let pageStyle = [{width: state.width, height: state.height}, styles.slide]
+    let pageStyle = [{width: state.width }, styles.slide]
 
     // For make infinite at least total > 1
     if(total > 1) {
@@ -581,7 +583,6 @@ module.exports = React.createClass({
     return (
       <View style={[styles.container, {
         width: state.width,
-        height: state.height
       }]}>
         {this.renderScrollView(pages)}
         {props.showsPagination && (props.renderPagination
